@@ -10,14 +10,14 @@
 
 ANON_TEST_CASE() {
 	auto empty=ff::format("");
-	REQUIRE(empty.Now()=="");
+	REQUIRE(empty.now()=="");
 
 	auto f=ff::format("bla");
-	REQUIRE(f.Now()=="bla");
+	REQUIRE(f.now()=="bla");
 
 	std::string fmt("flim");
 	auto ff=ff::format(fmt);
 	auto fff=ff::format(fmt.c_str());
-	REQUIRE(ff.Now()==fmt);
-	REQUIRE(fff.Now()==fmt);
+	REQUIRE(ff.now()==fmt);
+	REQUIRE(fff.now()==fmt);
 }
