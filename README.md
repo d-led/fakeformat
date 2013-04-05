@@ -13,7 +13,44 @@ Usage is extermely simple in case some prerequisites are met:
 - the input parameters are `ofstream`-streamable
 - you use single-byte character set
 
-Apart from this short intro, check out the [tests](tree/master/test).
+in terms of a test:
+````cpp
+REQUIRE(ff::format("{2}ff{1}").with('a').also_with(7).now()=="7ffa");
+````
+
+unlike the typical c++ string format libraries, `fakeformat` evaluates the parameters eagerly and saves them temporarily as strings. This allows for a split definition of parameters:
+````cpp
+  auto f=ff::format("ff{1}");
+	REQUIRE(f.now()=="ff{1}");
+	f.with(42);
+	f.with(13);
+	REQUIRE(f.now()=="ff42");
+````
+
+Unused parameters are ok.
+
+If you need a slight modification of the language, a configuration is no big deal:
+
+````cpp
+struct test_config {
+  static const char scope_begin='[';
+	static const char scope_end=']';
+	static const size_t index_begin=0; // the indices should start from 0
+};
+
+//...
+
+REQUIRE(ff::format<test_config>("[1][0]").with('a').also_with('b').now()=="ba");
+````
+
+For the rest of the API, check out the [tests](https://github.com/d-led/fakeformat/tree/master/test).
+
+status
+------
+
+Currently tested (Win32 and x64) only on Visual Studio 2012 Express, but should be no problem to test and fix on other compilers and platforms.
+
+Testing is done using [Catch](https://github.com/philsquared/Catch).
 
 license
 =======
