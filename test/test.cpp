@@ -21,3 +21,35 @@ ANON_TEST_CASE() {
 	REQUIRE(ff.now()==fmt);
 	REQUIRE(fff.now()==fmt);
 }
+
+TEST_CASE("format/one argument","one argument should be usable") {
+	auto f=ff::format("ff{1}").with('a');
+	REQUIRE(f.now()=="ffa");
+
+	REQUIRE_NOTHROW(f.clear_parameters());
+
+	REQUIRE(f.now()=="ff{1}");
+
+	f.with(123);
+	f.with(456);
+
+	REQUIRE(f.now()=="ff123");
+}
+
+TEST_CASE("format/two arguments","two arguments should be usable") {
+	auto f=ff::format("{2}ff{1}").with('a');
+	REQUIRE(f.now()=="{2}ffa");
+	
+	f.with(7);
+
+	REQUIRE(f.now()=="7ffa");
+
+	f.clear_parameters();
+	REQUIRE(f.now()=="{2}ff{1}");
+
+	REQUIRE(f.with('a').also_with(7).now()=="7ffa");
+}
+
+TEST_CASE("format/border cases","the behavior should produce the least astonishment") {
+	WARN("TODO");
+}
