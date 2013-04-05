@@ -71,3 +71,10 @@ TEST_CASE("format/border cases","the behavior should produce the least astonishm
 	REQUIRE(ff::format(" ").now()==" ");
 	REQUIRE(ff::format("{0}").with("a").now()=="{0}");
 }
+
+TEST_CASE("format/implementation defined peculiarities","some cases are not so obvious") {
+	REQUIRE(ff::format("{1x}").with("a").now()=="a");
+	REQUIRE(ff::format("{x1}").with("a").now()=="{x1}");
+	REQUIRE(ff::format("{ 01 }").with("a").now()=="a");
+	REQUIRE(ff::format("{ 0 1 }").with("a").now()=="{ 0 1 }");
+}
