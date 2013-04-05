@@ -3,5 +3,21 @@
 
 #include "../fakeformat.hpp"
 
+#include <string>
+
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
+
+ANON_TEST_CASE() {
+	auto empty=ff::format("");
+	REQUIRE(empty.Now()=="");
+
+	auto f=ff::format("bla");
+	REQUIRE(f.Now()=="bla");
+
+	std::string fmt("flim");
+	auto ff=ff::format(fmt);
+	auto fff=ff::format(fmt.c_str());
+	REQUIRE(ff.Now()==fmt);
+	REQUIRE(fff.Now()==fmt);
+}
