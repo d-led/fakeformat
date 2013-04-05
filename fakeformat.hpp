@@ -6,23 +6,24 @@
 #include <stdlib.h>
 #include <stdexcept>
 
+#ifndef FAKEFORMAT_NO_DEFAULTS
 //configurable
 #include <string>
 #include <sstream>
 #include <vector>
 #include <iostream>
+#endif
 
 namespace ff {
 
-	typedef char TChar;
-
+	template <typename TChar>
 	struct config {
-		static const char scope_begin='{';
-		static const char scope_end='}';
+		static const TChar scope_begin='{';
+		static const TChar scope_end='}';
 		static const size_t index_begin=1;
 	};
 
-	typedef config TConfig;
+#ifndef FAKEFORMAT_NO_DEFAULTS
 
 	namespace detail {
 		
@@ -66,17 +67,26 @@ namespace ff {
 			}
 
 		private:
-			typedef std::stringstream TStream;
 			mutable TStream impl;
 		};
 	}
 
-	typedef detail::stream<std::string,std::stringstream> TStream;
-	typedef std::string TString;
-	typedef std::string::const_iterator TPos;
-	typedef std::string TParam;
-	typedef std::vector<TParam> TParameters;
+	typedef detail::stream<std::string,std::stringstream> TDefaultStream;
+	typedef std::string TDefaultString;
+	typedef std::string::const_iterator TDefaultPos;
+	typedef std::string TDefaultParam;
+	typedef std::vector<TDefaultParam> TDefaultParameters;
+	typedef config<char> TDefaultConfig;
+#endif
 
+	template <
+		typename TConfig=TDefaultConfig,
+		typename TStream=TDefaultStream,
+		typename TString=TDefaultString,
+		typename TPos=TDefaultPos,
+		typename TParam=TDefaultParam,
+		typename TParameters=TDefaultParameters
+	>
 	class formatter {
 
 	public:
@@ -182,8 +192,27 @@ namespace ff {
 		TStream stream; // Caution: the stream is shared within the implementation!
 	};
 
-	template <typename TFmt>
-	formatter format(TFmt fmt) {
-		return formatter(fmt);
+#ifndef FAKEFORMAT_NO_DEFAULTS
+	formatter<TDefaultConfig> format(TDefaultString fmt) {
+		return formatter<TDefaultConfig>(fmt);
 	}
+
+	template <typename TConfig>
+	formatter<TConfig> format(TDefaultString fmt) {
+		return formatter<TConfig>(fmt);
+	}
+#endif
+
+	template <
+		typename TConfig,
+		typename TStream,
+		typename TString,
+		typename TPos,
+		typename TParam,
+		typename TParameters
+	>
+	formatter<TConfig,TStream,TString,TPos,TParam,TParameters> format(TString fmt) {
+		return formatter<TConfig,TStream,TString,TPos,TParam,TParameters>(fmt);
+	}
+
 }

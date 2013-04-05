@@ -84,6 +84,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\test\nodefaults_test.cpp" />
     <ClCompile Include="..\test\test.cpp" />
   </ItemGroup>
   <ItemGroup>

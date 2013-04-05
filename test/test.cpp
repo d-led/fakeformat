@@ -50,6 +50,24 @@ TEST_CASE("format/two arguments","two arguments should be usable") {
 	REQUIRE(f.with('a').also_with(7).now()=="7ffa");
 }
 
+namespace {
+struct test_config {
+	static const char scope_begin='[';
+	static const char scope_end=']';
+	static const size_t index_begin=0;
+};
+}
+
+TEST_CASE("format/custom config","formatting should be somewhat configurable") {
+	std::string fmt("[1][0]");
+	
+	REQUIRE(ff::format<ff::TDefaultConfig>(fmt).with('a').also_with('b').now()==fmt);
+
+	REQUIRE(ff::format<::test_config>(fmt).with('a').also_with('b').now()=="ba");
+}
+
 TEST_CASE("format/border cases","the behavior should produce the least astonishment") {
-	WARN("TODO");
+	REQUIRE(ff::format("").now()=="");
+	REQUIRE(ff::format(" ").now()==" ");
+	REQUIRE(ff::format("{0}").with("a").now()=="{0}");
 }
