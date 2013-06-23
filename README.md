@@ -46,7 +46,7 @@ For the rest of the API, check out the [tests](https://github.com/d-led/fakeform
 status
 ------
 
-Currently tested (Win32 and x64) only on Visual Studio 2012 Express, but should be no problem to test and fix on other compilers and platforms.
+Currently tested (Win32 and x64) with Visual Studio 2012 Express, and 32 bit in gcc 4.7.3, but should be no problem to test and fix on other compilers and platforms. A premake4 script should help with that task.
 
 Testing is done using [Catch](https://github.com/philsquared/Catch).
 
