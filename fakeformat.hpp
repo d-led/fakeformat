@@ -22,8 +22,6 @@ namespace ff {
 		static const size_t index_begin=1;
 	};
 
-#ifndef FAKEFORMAT_NO_DEFAULTS
-
 	namespace detail {
 		
 		template <
@@ -70,6 +68,8 @@ namespace ff {
 		};
 	}
 
+
+#ifndef FAKEFORMAT_NO_DEFAULTS
 	typedef detail::stream<std::string,std::stringstream> TDefaultStream;
 	typedef std::string TDefaultString;
 	typedef std::string::const_iterator TDefaultPos;
@@ -79,12 +79,12 @@ namespace ff {
 #endif
 
 	template <
-		typename TConfig=TDefaultConfig,
-		typename TStream=TDefaultStream,
-		typename TString=TDefaultString,
-		typename TPos=TDefaultPos,
-		typename TParam=TDefaultParam,
-		typename TParameters=TDefaultParameters
+		typename TConfig,
+		typename TStream,
+		typename TString,
+		typename TPos,
+		typename TParam,
+		typename TParameters
 	>
 	class formatter {
 
@@ -192,13 +192,13 @@ namespace ff {
 	};
 
 #ifndef FAKEFORMAT_NO_DEFAULTS
-	formatter<TDefaultConfig> format(TDefaultString fmt) {
-		return formatter<TDefaultConfig>(fmt);
+	formatter<TDefaultConfig,TDefaultStream,TDefaultString,TDefaultPos,TDefaultParam,TDefaultParameters> format(TDefaultString fmt) {
+		return formatter<TDefaultConfig,TDefaultStream,TDefaultString,TDefaultPos,TDefaultParam,TDefaultParameters>(fmt);
 	}
 
 	template <typename TConfig>
-	formatter<TConfig> format(TDefaultString fmt) {
-		return formatter<TConfig>(fmt);
+	formatter<TConfig,TDefaultStream,TDefaultString,TDefaultPos,TDefaultParam,TDefaultParameters> format(TDefaultString fmt) {
+		return formatter<TConfig,TDefaultStream,TDefaultString,TDefaultPos,TDefaultParam,TDefaultParameters>(fmt);
 	}
 #endif
 
