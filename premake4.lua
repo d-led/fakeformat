@@ -35,7 +35,7 @@ function CompilerSpecificConfiguration()
 
 	configuration {"gmake"}
 		postbuildcommands  { "$(TARGET)" }
-		buildoptions { "-std=gnu++0x" }
+		buildoptions { "-std=c++11" }
 
 	configuration {"codeblocks" }
 		postbuildcommands { "$(TARGET_OUTPUT_FILE)"}
@@ -45,7 +45,7 @@ function CompilerSpecificConfiguration()
 end
 
 -- A solution contains projects, and defines the available configurations
-local sln=solution "propertymap"
+local sln=solution "tests"
     location "Build"
 	sln.absbasedir=path.getabsolute(sln.basedir)
 	configurations { "Debug", "Release" }
