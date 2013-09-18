@@ -75,24 +75,18 @@ namespace ff {
 
 
 #ifndef FAKEFORMAT_NO_DEFAULTS
-	typedef detail::stream<std::string,std::stringstream> TDefaultStream;
-	typedef std::string TDefaultString;
-	typedef size_t TDefaultPos;
-	typedef std::string TDefaultParam;
-	typedef std::vector<TDefaultParam> TDefaultParameters;
-	typedef config<char> TDefaultConfig;
-	typedef std::pair< int,std::map<TDefaultString,TDefaultString> > TDefaultFormatSpecifier;
-	typedef std::map< std::pair<TDefaultPos,TDefaultPos>, TDefaultFormatSpecifier > TDefaultConfigPara;
+	typedef detail::stream<std::string,std::stringstream> TStream;
+	typedef std::string TString;
+	typedef size_t TPos;
+	typedef std::string TParam;
+	typedef std::vector<TParam> TParameters;
+	typedef config<char> TConfig;
+	typedef std::pair< int,std::map<TString,TString> > TFormatSpecifier;
+	typedef std::map< std::pair<TPos,TPos>, TFormatSpecifier > TConfigPara;
 #endif
 
 	template <
-	typename TConfig,
-	typename TConfigPara,
-	typename TStream,
-	typename TString,
-	typename TPos,
-	typename TParam,
-	typename TParameters
+	typename TConfig
 	>
 	class formatter {
 
@@ -212,7 +206,7 @@ namespace ff {
 			} state = GENERAL;
 
 			size_t last_brace_pos=0;
-			TDefaultConfigPara::mapped_type format_specifier;
+			TConfigPara::mapped_type format_specifier;
 
 			for (TPos pos = 0; pos < length; ++pos) {
 				char cc=format_string[pos];
@@ -251,27 +245,14 @@ namespace ff {
 	};
 
 #ifndef FAKEFORMAT_NO_DEFAULTS
-	formatter<TDefaultConfig,TDefaultConfigPara,TDefaultStream,TDefaultString,TDefaultPos,TDefaultParam,TDefaultParameters> format(TDefaultString fmt) {
-		return formatter<TDefaultConfig,TDefaultConfigPara,TDefaultStream,TDefaultString,TDefaultPos,TDefaultParam,TDefaultParameters>(fmt);
+	formatter<TConfig> format(TString fmt) {
+		return formatter<TConfig>(fmt);
 	}
 
 	template <typename TConfig>
-	formatter<TConfig,TDefaultConfigPara,TDefaultStream,TDefaultString,TDefaultPos,TDefaultParam,TDefaultParameters> format(TDefaultString fmt) {
-		return formatter<TConfig,TDefaultConfigPara,TDefaultStream,TDefaultString,TDefaultPos,TDefaultParam,TDefaultParameters>(fmt);
+	formatter<TConfig> format(TString fmt) {
+		return formatter<TConfig>(fmt);
 	}
 #endif
-
-	template <
-	typename TConfig,
-	typename TConfigPara,
-	typename TStream,
-	typename TString,
-	typename TPos,
-	typename TParam,
-	typename TParameters
-	>
-	formatter<TConfig,TConfigPara,TStream,TString,TPos,TParam,TParameters> format(TString fmt) {
-		return formatter<TConfig,TConfigPara,TStream,TString,TPos,TParam,TParameters>(fmt);
-	}
 
 }
