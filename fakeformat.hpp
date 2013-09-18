@@ -215,16 +215,18 @@ namespace ff {
 					}
 				} else if (state==COLLECTING_PLACEHOLDER) {
 					if (cc==TConfig::separator) {
-
+						state=COLLECTING_KEY;
 					} else if (cc==TConfig::scope_end) {
-						
+						state=GENERAL;
+					} else {
+						std::cout<<cc<<std::endl;
 					}
 				} else {
 					if (cc==TConfig::scope_end) {
 						state=GENERAL;
-						std::cout<<std::endl;
+						// std::cout<<std::endl;
 					} else {
-						std::cout<<cc;
+						// std::cout<<cc;
 					}
 				}
 			}
