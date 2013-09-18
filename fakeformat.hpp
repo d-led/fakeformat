@@ -231,13 +231,13 @@ namespace ff {
 						state=GENERAL;
 					} else {
 					}
-				} else {
+				} else if (state == COLLECTING_KEY) {
 					if (cc==TConfig::scope_end) {
 						state=GENERAL;
 						preparsed_format[std::make_pair(last_brace_pos,pos+1-last_brace_pos)]=format_specifier;
-					} else {
-						// std::cout<<cc;
 					}
+				} else {
+					
 				}
 			}
 		}
