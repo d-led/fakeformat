@@ -23,15 +23,16 @@ namespace ff {
 	struct config {
 		static const TChar scope_begin='{';
 		static const TChar scope_end='}';
+		static const TChar separator=',';
 		static const size_t index_begin=1;
 	};
 
 	namespace detail {
 		
 		template <
-			typename TString=std::string,
-			typename TStream=std::stringstream
-			>
+		typename TString=std::string,
+		typename TStream=std::stringstream
+		>
 		class stream {
 
 		public:
@@ -84,19 +85,19 @@ namespace ff {
 #endif
 
 	template <
-		typename TConfig,
-		typename TConfigPara,
-		typename TStream,
-		typename TString,
-		typename TPos,
-		typename TParam,
-		typename TParameters
+	typename TConfig,
+	typename TConfigPara,
+	typename TStream,
+	typename TString,
+	typename TPos,
+	typename TParam,
+	typename TParameters
 	>
 	class formatter {
 
 	public:
 		formatter(TString fmt):
-			format_string(fmt)
+		format_string(fmt)
 		{
 			parse_format_string();
 		}
@@ -151,7 +152,7 @@ namespace ff {
 	// 			if (*current==TConfig::scope_end) {
 	// 				TPos key_beginning=last;
 	// 				++key_beginning;
-					
+
 	// 				int key=string_to_key(key_beginning,current);
 	// 				if (valid_range(key)) {
 	// 					stream.put(parameters[key]);
@@ -193,14 +194,45 @@ namespace ff {
 	private:
 		void parse_format_string() {
 			TPos length=format_string.length();
+			
+			//state 
+			enum State {
+				GENERAL=0,
+				COLLECTING_PLACEHOLDER,
+				COLLECTING_KEY,
+				COLLECTING_VALUE
+			} state = GENERAL;
+
+			size_t last_brace_pos=0;
+
 			for (TPos pos = 0; pos < length; ++pos) {
-				std::cout<<format_string[pos];
+				char cc=format_string[pos];
+
+				if (state==GENERAL) {
+					if (cc == TConfig::scope_begin) {
+						state=COLLECTING_PLACEHOLDER;
+						last_brace_pos=pos;
+					}
+				} else if (state==COLLECTING_PLACEHOLDER) {
+					if (cc==TConfig::separator) {
+
+					} else if (cc==TConfig::scope_end) {
+						
+					}
+				} else {
+					if (cc==TConfig::scope_end) {
+						state=GENERAL;
+						std::cout<<std::endl;
+					} else {
+						std::cout<<cc;
+					}
+				}
 			}
-			std::cout<<std::endl;
 		}
-	
-	// private:
+
+	private:
 		TString format_string;
+		TConfigPara preparsed_format;
 	// 	TParameters parameters;
 
 	// 	TStream stream; // Caution: the stream is shared within the implementation!
@@ -218,13 +250,13 @@ namespace ff {
 #endif
 
 	template <
-		typename TConfig,
-		typename TConfigPara,
-		typename TStream,
-		typename TString,
-		typename TPos,
-		typename TParam,
-		typename TParameters
+	typename TConfig,
+	typename TConfigPara,
+	typename TStream,
+	typename TString,
+	typename TPos,
+	typename TParam,
+	typename TParameters
 	>
 	formatter<TConfig,TConfigPara,TStream,TString,TPos,TParam,TParameters> format(TString fmt) {
 		return formatter<TConfig,TConfigPara,TStream,TString,TPos,TParam,TParameters>(fmt);
