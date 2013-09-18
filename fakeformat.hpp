@@ -24,6 +24,7 @@ namespace ff {
 		static const TChar scope_begin='{';
 		static const TChar scope_end='}';
 		static const TChar separator=',';
+		static const TChar equals=',';
 		static const size_t index_begin=1;
 	};
 
@@ -226,9 +227,13 @@ namespace ff {
 					} else {
 					}
 				} else if (state == COLLECTING_KEY) {
-					if (cc==TConfig::scope_end) {
+					if ( cc == TConfig::scope_end ) {
 						state=GENERAL;
 						preparsed_format[std::make_pair(last_brace_pos,pos+1-last_brace_pos)]=format_specifier;
+					} else if ( cc == TConfig::separator ) {
+
+					} else if ( cc == TConfig::equals) {
+						
 					}
 				} else {
 					
