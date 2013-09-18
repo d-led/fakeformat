@@ -81,7 +81,8 @@ namespace ff {
 	typedef std::string TDefaultParam;
 	typedef std::vector<TDefaultParam> TDefaultParameters;
 	typedef config<char> TDefaultConfig;
-	typedef std::map< TDefaultPos, std::pair< int,std::map<TDefaultString,TDefaultString> > > TDefaultConfigPara;
+	typedef std::pair< int,std::map<TDefaultString,TDefaultString> > TDefaultFormatSpecifier;
+	typedef std::map< std::pair<TDefaultPos,TDefaultPos>, TDefaultFormatSpecifier > TDefaultConfigPara;
 #endif
 
 	template <
@@ -100,6 +101,9 @@ namespace ff {
 		format_string(fmt)
 		{
 			parse_format_string();
+			for (auto x: preparsed_format) {
+				std::cout<<x.first.first<<":"<<x.second.first<<std::endl;
+			}
 		}
 
 	public:
@@ -182,15 +186,19 @@ namespace ff {
 	// 		return key>=0 && (size_t)key<parameters.size();
 	// 	}
 
-	// 	static int string_to_key(TPos beg,TPos end) {
-	// 		int res=-1;
-	// 		try {
-	// 			//configure?
-	// 			res=std::stoi(TString(beg,end))
-	// 				-TConfig::index_begin;
-	// 		} catch (std::exception&) {}
-	// 		return res;
-	// 	}
+		static int string_to_key(TString const& to_parse) {
+			int res=-1;
+			/* //c++11
+			try {
+				//configure?
+				res=std::stoi(TString(beg,end))
+				-TConfig::index_begin;
+			} catch (std::exception&) {}
+			*/
+			res = atoi(to_parse.c_str());
+			return res;
+		}
+
 	private:
 		void parse_format_string() {
 			TPos length=format_string.length();
@@ -204,6 +212,7 @@ namespace ff {
 			} state = GENERAL;
 
 			size_t last_brace_pos=0;
+			TDefaultConfigPara::mapped_type format_specifier;
 
 			for (TPos pos = 0; pos < length; ++pos) {
 				char cc=format_string[pos];
@@ -215,16 +224,17 @@ namespace ff {
 					}
 				} else if (state==COLLECTING_PLACEHOLDER) {
 					if (cc==TConfig::separator) {
+						format_specifier.first=string_to_key(TString(format_string.begin()+last_brace_pos+1,format_string.begin()+pos));
 						state=COLLECTING_KEY;
 					} else if (cc==TConfig::scope_end) {
+						preparsed_format[std::make_pair(last_brace_pos,pos+1-last_brace_pos)]=format_specifier;
 						state=GENERAL;
 					} else {
-						std::cout<<cc<<std::endl;
 					}
 				} else {
 					if (cc==TConfig::scope_end) {
 						state=GENERAL;
-						// std::cout<<std::endl;
+						preparsed_format[std::make_pair(last_brace_pos,pos+1-last_brace_pos)]=format_specifier;
 					} else {
 						// std::cout<<cc;
 					}
