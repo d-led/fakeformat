@@ -72,3 +72,30 @@ local format_h_lines=filter_lines(fh_lines,fh_insert_start,fh_insert_end)
 ---prepare format.cpp---
 local format_cpp_lines, fp_insert_start, fp_insert_end = get_lines("smc_format/format.cpp",[[//---------]],"\n")
 
+---regenerate fakeformat.hpp---
+local fakeformat_new={}
+for k,v in ipairs(ff_lines) do
+    if k<=ff_insert_start then
+        fakeformat_new[#fakeformat_new+1]=v
+    end
+end
+for k,v in ipairs(format_context_lines) do
+      fakeformat_new[#fakeformat_new+1]=v
+end
+for k,v in ipairs(format_h_lines) do
+       fakeformat_new[#fakeformat_new+1]=v
+end
+for k,v in ipairs(format_cpp_lines) do
+       fakeformat_new[#fakeformat_new+1]=v
+end
+for k,v in ipairs(ff_lines) do
+    if k>=ff_insert_end then
+        fakeformat_new[#fakeformat_new+1]=v
+    end
+end
+
+local fakeformat_hpp_new=table.concat(fakeformat_new,"\n"):gsub([[#include "format.h"]],"")
+
+local ffn=assert(io.open("fakeformat.hpp","w"))
+ffn:write(fakeformat_hpp_new)
+ffn:close()

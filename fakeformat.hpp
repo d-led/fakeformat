@@ -75,150 +75,185 @@ namespace ff {
 
 	//////////////////PARSER BEGIN////////////////////////
 
-#ifndef FSM_FormatParser_09_20_2013_20_00_04_H
-#define FSM_FormatParser_09_20_2013_20_00_04_H
-//----------------------------------------------
-// format.h
-// FSM:       FormatParser
-// Context:   FormatContext
-// Version:   
-// Generated: Freitag 09/20/2013 at 20:00:04 MESZ
-//
+static const int START_POS=-1;
+
+struct Placeholder {
+	int id;
+	int length;
+	TKeyValueMap config;
+	Placeholder():id(START_POS),length(START_POS){}
+};
+
+typedef std::vector< std::pair<int,Placeholder> > Placeholders;
+
+class FormatContext
+{
+	struct ParserState {
+		std::string format_string;
+		int pos;
+		int last_left_brace;
+		int last_key_start;
+		int last_value_start;
+		std::string last_key;
+		Placeholder current_placeholder;
+		Placeholders placeholders;
+	} state;
+
+	static int string_to_key(std::string const& to_parse) {
+		int res=START_POS;
+		//c++11
+		try {
+			res=std::stoi(to_parse);
+		} catch (std::exception&) {}
+		return res;
+	}
+
+public:
+
+	bool IsAtEnd() const {
+		bool res=state.pos >= (static_cast<int>(state.format_string.size())-1);
+#ifdef DO_DEMO
+		if (res)
+			rlutil::setColor(rlutil::GREY);
+#endif
+		return res;
+	}
+
+	char Step() {
+		if (IsAtEnd())
+			return '\0';
+
+		state.pos++;
+		return state.format_string[state.pos];
+	}
+
+	void ResetPlaceholderState() {
+		state.last_value_start=state.last_key_start=state.last_left_brace=START_POS;
+	}
+	
+	void SetString(std::string const& _) { 
+		state.format_string=_;
+		state.pos=START_POS;
+		ResetPlaceholderState();
+#if DO_DEMO
+		rlutil::setColor(rlutil::WHITE);
+#endif
+	}
+
+	void TryAddPlaceholder() {
+		if (state.current_placeholder.id!=START_POS) {
+			state.current_placeholder.length=state.pos-state.last_left_brace+1;
+			state.placeholders.push_back(std::make_pair(state.last_left_brace,state.current_placeholder));
+		}
+	}
+
+public:
 
 
-// Included header files
+	void StartCollectingPlaceholder() {
+		state.current_placeholder=Placeholder();
+		state.last_left_brace=state.pos;
+		state.last_key_start=state.last_value_start=START_POS;
+		state.last_key="";
+#if DO_DEMO
+		rlutil::setColor(rlutil::BLUE);
+#endif
+	}
 
-	static const int START_POS=-1;
+	void ParsePlaceholder() {
+		int id=string_to_key(std::string(state.format_string.begin()+state.last_left_brace+1,state.format_string.begin()+state.pos));
+		state.current_placeholder.id=id;
+	}
 
-	struct Placeholder {
-		int id;
-		int length;
-		TKeyValueMap config;
-		Placeholder():id(START_POS),length(START_POS){}
-	};
+	void AddValue() {
+		state.current_placeholder.config[state.last_key]=
+			std::string(state.format_string.begin()+state.last_value_start+1,state.format_string.begin()+state.pos);
+		state.last_key_start=state.pos;
+		state.last_value_start=START_POS;
+	}
 
-	typedef std::vector< std::pair<int,Placeholder> > Placeholders;
+	void StartKey() {
+		state.last_key_start=state.pos;
+		state.last_value_start=START_POS;
+		state.last_key="";
+#if DO_DEMO
+		rlutil::setColor(rlutil::YELLOW);
+#endif
+	}
 
-	class FormatContext
-	{
-		struct ParserState {
-			std::string format_string;
-			int pos;
-			int last_left_brace;
-			int last_key_start;
-			int last_value_start;
-			std::string last_key;
-			Placeholder current_placeholder;
-			Placeholders placeholders;
-		} state;
+	void AddKey() {
+		if ( (state.pos-state.last_key_start) < 1 )
+			return;
+		state.last_key=std::string(state.format_string.begin()+state.last_key_start+1,state.format_string.begin()+state.pos);
+		state.current_placeholder.config[state.last_key]="";
+	}
 
-		static int string_to_key(std::string const& to_parse) {
-			int res=START_POS;
-			//c++11
-			try {
-				res=std::stoi(to_parse);
-			} catch (std::exception&) {}
-			return res;
+	void ContinueCollectingKeys() {
+		state.last_key_start=state.pos;
+#if DO_DEMO
+		rlutil::setColor(rlutil::WHITE);
+#endif
+	}
+
+	void StartAddingValue() {
+		state.last_key_start=START_POS;
+		state.last_value_start=state.pos;
+#if DO_DEMO
+		rlutil::setColor(rlutil::MAGENTA);
+#endif
+	}
+
+	void FinishCollectingPlaceholder() {
+		if (state.last_key_start!=START_POS)
+			AddKey();
+
+		if (state.last_left_brace!=START_POS
+			&& (state.pos-state.last_left_brace) > 1) {
+				TryAddPlaceholder();
 		}
 
-	public:
+		ResetPlaceholderState();
+#if DO_DEMO
+		rlutil::setColor(rlutil::LIGHTBLUE);
+#endif
+	}
 
-		bool IsAtEnd() const {
-			bool res=state.pos >= (static_cast<int>(state.format_string.size())-1);
-			return res;
-		}
+	void Continue() {
+#if DO_DEMO
+		if (state.last_value_start>=0)
+			rlutil::setColor(rlutil::LIGHTRED);
+		else if (state.last_key_start>=0)
+			rlutil::setColor(rlutil::YELLOW);
+		else if (state.last_left_brace>=0)
+			rlutil::setColor(rlutil::GREEN);
+		else
+			rlutil::setColor(rlutil::WHITE);
+#endif
+	}
 
-		char Step() {
-			if (IsAtEnd())
-				return '\0';
+	void FSMError(const char*, const char*) {
+	}
 
-			state.pos++;
-			return state.format_string[state.pos];
-		}
+	Placeholders Get() {
+		return state.placeholders;
+	}
 
-		void ResetPlaceholderState() {
-			state.last_value_start=state.last_key_start=state.last_left_brace=START_POS;
-		}
-
-		void SetString(std::string const& _) { 
-			state.format_string=_;
-			state.pos=START_POS;
-			ResetPlaceholderState();
-		}
-
-		void TryAddPlaceholder() {
-			if (state.current_placeholder.id!=START_POS) {
-				state.current_placeholder.length=state.pos-state.last_left_brace+1;
-				state.placeholders.push_back(std::make_pair(state.last_left_brace,state.current_placeholder));
+#if DO_DEMO
+	~FormatContext() {
+		for (auto k: state.placeholders) {
+			std::cout<<k.first<<"-"<<k.first+k.second.length-1<<": "<<k.second.id<<" ";
+			for (auto v: k.second.config) {
+				std::cout<<v.first;
+				if (v.second.length())
+					std::cout<<"="<<v.second;
+				std::cout<<" ";
 			}
+			std::cout<<std::endl;
 		}
+	}
+#endif
 
-	public:
-
-
-		void StartCollectingPlaceholder() {
-			state.current_placeholder=Placeholder();
-			state.last_left_brace=state.pos;
-			state.last_key_start=state.last_value_start=START_POS;
-			state.last_key="";
-		}
-
-		void ParsePlaceholder() {
-			int id=string_to_key(std::string(state.format_string.begin()+state.last_left_brace+1,state.format_string.begin()+state.pos));
-			state.current_placeholder.id=id;
-		}
-
-		void AddValue() {
-			state.current_placeholder.config[state.last_key]=
-				std::string(state.format_string.begin()+state.last_value_start+1,state.format_string.begin()+state.pos);
-			state.last_key_start=state.pos;
-			state.last_value_start=START_POS;
-		}
-
-		void StartKey() {
-			state.last_key_start=state.pos;
-			state.last_value_start=START_POS;
-			state.last_key="";
-		}
-
-		void AddKey() {
-			if ( (state.pos-state.last_key_start) < 1 )
-				return;
-			state.last_key=std::string(state.format_string.begin()+state.last_key_start+1,state.format_string.begin()+state.pos);
-			state.current_placeholder.config[state.last_key]="";
-		}
-
-		void ContinueCollectingKeys() {
-			state.last_key_start=state.pos;
-		}
-
-		void StartAddingValue() {
-			state.last_key_start=START_POS;
-			state.last_value_start=state.pos;
-		}
-
-		void FinishCollectingPlaceholder() {
-			if (state.last_key_start!=START_POS)
-				AddKey();
-
-			if (state.last_left_brace!=START_POS
-				&& (state.pos-state.last_left_brace) > 1) {
-					TryAddPlaceholder();
-			}
-
-			ResetPlaceholderState();
-		}
-
-		void Continue() {
-		}
-
-		void FSMError(const char*, const char*) {
-		}
-
-		Placeholders Get() {
-			return state.placeholders;
-		}
-	};
+};
 
 
 // Forward Declarations
@@ -246,9 +281,9 @@ class FormatParserReadingKeyState : public FormatParserState
   public: 
     virtual const char* StateName() const
         { return "ReadingKey"; }
+    virtual void ReadEqualsSign( FormatParser& );
     virtual void ReadComma( FormatParser& );
     virtual void ReadLeftBrace( FormatParser& );
-    virtual void ReadEqualsSign( FormatParser& );
     virtual void ReadRightBrace( FormatParser& );
 };
 //----------------------------------------------
@@ -269,9 +304,9 @@ class FormatParserReadingPlaceholderState : public FormatParserState
   public: 
     virtual const char* StateName() const
         { return "ReadingPlaceholder"; }
+    virtual void ReadLeftBrace( FormatParser& );
     virtual void ReadRightBrace( FormatParser& );
     virtual void ReadComma( FormatParser& );
-    virtual void ReadLeftBrace( FormatParser& );
 };
 //----------------------------------------------
 // State: ReadingValue
@@ -281,9 +316,9 @@ class FormatParserReadingValueState : public FormatParserState
   public: 
     virtual const char* StateName() const
         { return "ReadingValue"; }
-    virtual void ReadComma( FormatParser& );
     virtual void ReadRightBrace( FormatParser& );
     virtual void ReadLeftBrace( FormatParser& );
+    virtual void ReadComma( FormatParser& );
 };
 //----------------------------------------------
 // FormatParser: The Finite State Machine class
@@ -316,218 +351,216 @@ class FormatParser: public FormatContext
     FormatParserState* itsState;
 };
 
-#endif /* FSM_FormatParser_09_20_2013_20_00_04_H */
+//----------------------------------------------
+// format.cpp
+// FSM:       FormatParser
+// Context:   FormatContext
+// Version:   
+// Generated: Freitag 09/20/2013 at 23:10:19 MESZ
+//
 
 
-	//----------------------------------------------
-	// format.cpp
-	// FSM:       FormatParser
-	// Context:   FormatContext
-	// Version:   
-	// Generated: Freitag 09/20/2013 at 20:00:04 MESZ
-	//
+static char _versID[]  = "";
 
 
-	static char _versID[]  = "";
 
-	//----------------------------------------------
-	// Definitions of static state objects
+//----------------------------------------------
+// Definitions of static state objects
 
-	//----------------------------------------------
-	FormatParserReadingKeyState FormatParser::ReadingKey;
-	FormatParserGeneralState FormatParser::General;
-	FormatParserReadingPlaceholderState FormatParser::ReadingPlaceholder;
-	FormatParserReadingValueState FormatParser::ReadingValue;
+//----------------------------------------------
+FormatParserReadingKeyState FormatParser::ReadingKey;
+FormatParserGeneralState FormatParser::General;
+FormatParserReadingPlaceholderState FormatParser::ReadingPlaceholder;
+FormatParserReadingValueState FormatParser::ReadingValue;
 
-	//----------------------------------------------
-	// Default Event Functions
+//----------------------------------------------
+// Default Event Functions
 
-	//----------------------------------------------
+//----------------------------------------------
 
-	void FormatParserState::ReadEqualsSign(FormatParser& s)
-	{ s.FSMError("ReadEqualsSign", s.GetState().StateName()); }
+void FormatParserState::ReadEqualsSign(FormatParser& s)
+  { s.FSMError("ReadEqualsSign", s.GetState().StateName()); }
 
-	void FormatParserState::ReadRightBrace(FormatParser& s)
-	{ s.FSMError("ReadRightBrace", s.GetState().StateName()); }
+void FormatParserState::ReadRightBrace(FormatParser& s)
+  { s.FSMError("ReadRightBrace", s.GetState().StateName()); }
 
-	void FormatParserState::ReadLeftBrace(FormatParser& s)
-	{ s.FSMError("ReadLeftBrace", s.GetState().StateName()); }
+void FormatParserState::ReadLeftBrace(FormatParser& s)
+  { s.FSMError("ReadLeftBrace", s.GetState().StateName()); }
 
-	void FormatParserState::ReadComma(FormatParser& s)
-	{ s.FSMError("ReadComma", s.GetState().StateName()); }
+void FormatParserState::ReadComma(FormatParser& s)
+  { s.FSMError("ReadComma", s.GetState().StateName()); }
 
-	//----------------------------------------------
-	// The States and their Transitions
-	//----------------------------------------------
+//----------------------------------------------
+// The States and their Transitions
+//----------------------------------------------
 
-	//----------------------------------------------
-	// ReadingKey Actions and Transitions
-	//----------------------------------------------
+//----------------------------------------------
+// ReadingKey Actions and Transitions
+//----------------------------------------------
 
-	// Starting State: ReadingKey
-	// Event:          ReadComma
-	//
-	void FormatParserReadingKeyState::ReadComma( FormatParser& s )
-	{
+// Starting State: ReadingKey
+// Event:          ReadEqualsSign
+//
+void FormatParserReadingKeyState::ReadEqualsSign( FormatParser& s )
+{
 
-		s.AddKey();
-		s.ContinueCollectingKeys();
+    s.AddKey();
+    s.StartAddingValue();
 
-		// Change the state
-		s.SetState(FormatParser::ReadingKey);
-	}
+    // Change the state
+    s.SetState(FormatParser::ReadingValue);
+}
 
-	// Starting State: ReadingKey
-	// Event:          ReadLeftBrace
-	//
-	void FormatParserReadingKeyState::ReadLeftBrace( FormatParser& s )
-	{
+// Starting State: ReadingKey
+// Event:          ReadComma
+//
+void FormatParserReadingKeyState::ReadComma( FormatParser& s )
+{
 
-		s.StartCollectingPlaceholder();
+    s.AddKey();
+    s.ContinueCollectingKeys();
 
-		// Change the state
-		s.SetState(FormatParser::ReadingPlaceholder);
-	}
+    // Change the state
+    s.SetState(FormatParser::ReadingKey);
+}
 
-	// Starting State: ReadingKey
-	// Event:          ReadEqualsSign
-	//
-	void FormatParserReadingKeyState::ReadEqualsSign( FormatParser& s )
-	{
+// Starting State: ReadingKey
+// Event:          ReadLeftBrace
+//
+void FormatParserReadingKeyState::ReadLeftBrace( FormatParser& s )
+{
 
-		s.AddKey();
-		s.StartAddingValue();
+    s.StartCollectingPlaceholder();
 
-		// Change the state
-		s.SetState(FormatParser::ReadingValue);
-	}
+    // Change the state
+    s.SetState(FormatParser::ReadingPlaceholder);
+}
 
-	// Starting State: ReadingKey
-	// Event:          ReadRightBrace
-	//
-	void FormatParserReadingKeyState::ReadRightBrace( FormatParser& s )
-	{
+// Starting State: ReadingKey
+// Event:          ReadRightBrace
+//
+void FormatParserReadingKeyState::ReadRightBrace( FormatParser& s )
+{
 
-		s.FinishCollectingPlaceholder();
+    s.FinishCollectingPlaceholder();
 
-		// Change the state
-		s.SetState(FormatParser::General);
-	}
+    // Change the state
+    s.SetState(FormatParser::General);
+}
 
-	//----------------------------------------------
-	// General Actions and Transitions
-	//----------------------------------------------
+//----------------------------------------------
+// General Actions and Transitions
+//----------------------------------------------
 
-	// Starting State: General
-	// Event:          ReadLeftBrace
-	//
-	void FormatParserGeneralState::ReadLeftBrace( FormatParser& s )
-	{
+// Starting State: General
+// Event:          ReadLeftBrace
+//
+void FormatParserGeneralState::ReadLeftBrace( FormatParser& s )
+{
 
-		s.StartCollectingPlaceholder();
+    s.StartCollectingPlaceholder();
 
-		// Change the state
-		s.SetState(FormatParser::ReadingPlaceholder);
-	}
+    // Change the state
+    s.SetState(FormatParser::ReadingPlaceholder);
+}
 
-	//----------------------------------------------
-	// ReadingPlaceholder Actions and Transitions
-	//----------------------------------------------
+//----------------------------------------------
+// ReadingPlaceholder Actions and Transitions
+//----------------------------------------------
 
-	// Starting State: ReadingPlaceholder
-	// Event:          ReadRightBrace
-	//
-	void FormatParserReadingPlaceholderState::ReadRightBrace( FormatParser& s )
-	{
+// Starting State: ReadingPlaceholder
+// Event:          ReadLeftBrace
+//
+void FormatParserReadingPlaceholderState::ReadLeftBrace( FormatParser& s )
+{
 
-		s.ParsePlaceholder();
-		s.FinishCollectingPlaceholder();
+    s.StartCollectingPlaceholder();
 
-		// Change the state
-		s.SetState(FormatParser::General);
-	}
+    // Change the state
+    s.SetState(FormatParser::ReadingPlaceholder);
+}
 
-	// Starting State: ReadingPlaceholder
-	// Event:          ReadComma
-	//
-	void FormatParserReadingPlaceholderState::ReadComma( FormatParser& s )
-	{
+// Starting State: ReadingPlaceholder
+// Event:          ReadRightBrace
+//
+void FormatParserReadingPlaceholderState::ReadRightBrace( FormatParser& s )
+{
 
-		s.ParsePlaceholder();
-		s.StartKey();
+    s.ParsePlaceholder();
+    s.FinishCollectingPlaceholder();
 
-		// Change the state
-		s.SetState(FormatParser::ReadingKey);
-	}
+    // Change the state
+    s.SetState(FormatParser::General);
+}
 
-	// Starting State: ReadingPlaceholder
-	// Event:          ReadLeftBrace
-	//
-	void FormatParserReadingPlaceholderState::ReadLeftBrace( FormatParser& s )
-	{
+// Starting State: ReadingPlaceholder
+// Event:          ReadComma
+//
+void FormatParserReadingPlaceholderState::ReadComma( FormatParser& s )
+{
 
-		s.StartCollectingPlaceholder();
+    s.ParsePlaceholder();
+    s.StartKey();
 
-		// Change the state
-		s.SetState(FormatParser::ReadingPlaceholder);
-	}
+    // Change the state
+    s.SetState(FormatParser::ReadingKey);
+}
 
-	//----------------------------------------------
-	// ReadingValue Actions and Transitions
-	//----------------------------------------------
+//----------------------------------------------
+// ReadingValue Actions and Transitions
+//----------------------------------------------
 
-	// Starting State: ReadingValue
-	// Event:          ReadComma
-	//
-	void FormatParserReadingValueState::ReadComma( FormatParser& s )
-	{
+// Starting State: ReadingValue
+// Event:          ReadRightBrace
+//
+void FormatParserReadingValueState::ReadRightBrace( FormatParser& s )
+{
 
-		s.AddValue();
+    s.AddValue();
+    s.FinishCollectingPlaceholder();
 
-		// Change the state
-		s.SetState(FormatParser::ReadingKey);
-	}
+    // Change the state
+    s.SetState(FormatParser::General);
+}
 
-	// Starting State: ReadingValue
-	// Event:          ReadRightBrace
-	//
-	void FormatParserReadingValueState::ReadRightBrace( FormatParser& s )
-	{
+// Starting State: ReadingValue
+// Event:          ReadLeftBrace
+//
+void FormatParserReadingValueState::ReadLeftBrace( FormatParser& s )
+{
 
-		s.AddValue();
-		s.FinishCollectingPlaceholder();
+    s.StartCollectingPlaceholder();
 
-		// Change the state
-		s.SetState(FormatParser::General);
-	}
+    // Change the state
+    s.SetState(FormatParser::ReadingPlaceholder);
+}
 
-	// Starting State: ReadingValue
-	// Event:          ReadLeftBrace
-	//
-	void FormatParserReadingValueState::ReadLeftBrace( FormatParser& s )
-	{
+// Starting State: ReadingValue
+// Event:          ReadComma
+//
+void FormatParserReadingValueState::ReadComma( FormatParser& s )
+{
 
-		s.StartCollectingPlaceholder();
+    s.AddValue();
 
-		// Change the state
-		s.SetState(FormatParser::ReadingPlaceholder);
-	}
+    // Change the state
+    s.SetState(FormatParser::ReadingKey);
+}
 
-	//----------------------------------------------
-	// State Machine Constructor: FormatParser
-	//  set Initial State to: General
-	//
-	//----------------------------------------------
-	FormatParser::FormatParser() : itsState(&General)
-	{
-		// Entry functions for: General
-	}
+//----------------------------------------------
+// State Machine Constructor: FormatParser
+//  set Initial State to: General
+//
+//----------------------------------------------
+FormatParser::FormatParser() : itsState(&General)
+{
+    // Entry functions for: General
+}
 
-	//  Get version information
-	//
-	const char* FormatParser::GetVersion() const
-	{ return _versID; }
-
+//  Get version information
+//
+const char* FormatParser::GetVersion() const
+{ return _versID; }
 
 	//////////////////PARSER END//////////////////////////
 
