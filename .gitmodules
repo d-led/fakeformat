@@ -1,6 +1,3 @@
 [submodule "Catch"]
 	path = Catch
 	url = git://github.com/philsquared/Catch.git
-[submodule "smc_format"]
-	path = smc_format
-	url = https://github.com/d-led/smc_format.git
