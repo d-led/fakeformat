@@ -536,7 +536,7 @@ class FormatParser: public FormatContext
 	typedef std::string TString;
 	typedef size_t TPos;
 	typedef std::string TParam;
-	typedef std::vector<TParam> TParameters;
+	typedef std::map<TPos,TParam> TParameters;
 	typedef config<char> TConfig;
 
 	template <
@@ -556,15 +556,16 @@ class FormatParser: public FormatContext
 
 		template <typename T>
 		formatter& with(T const& param) {
-			for (Placeholders::const_iterator it=placeholders.begin();
-				it!=placeholders.end();
-				++it) {
+			size_t count=placeholders.size();
+			for (size_t it=0;
+				it<count;
+				it++) {
 					stream.clear();
-					if (it->second.id==pos) {
-						stream.configure(it->second.config);
+					if (placeholders[it].second.id==pos) {
+						stream.configure(placeholders[it].second.config);
+						stream.put(param);
+						parameters[it]=stream.str();
 					}
-					stream.put(param);
-					parameters.push_back(stream.str());
 			}
 			pos++;
 			return *this;
@@ -587,6 +588,7 @@ class FormatParser: public FormatContext
 
 	 	void clear_parameters() {
 	 		parameters.clear();
+			pos=TConfig::index_begin;
 	 	}
 
 	 private:
@@ -594,9 +596,11 @@ class FormatParser: public FormatContext
 	 	TString assemble_string() const {
 			std::string res(format_string);
 
-			for (int it=placeholders.size()-1;
-				 it>=0;
-				 it--) {
+			for (TParameters::const_reverse_iterator it=parameters.rbegin();
+				 it!=parameters.rend();
+				 ++it) {
+					 std::pair<int,Placeholder> const& pl=placeholders[it->first];
+					 res.replace(pl.first,pl.second.length,it->second);
 			}
 
 			return res;
@@ -610,10 +614,10 @@ class FormatParser: public FormatContext
 			while (!f.IsAtEnd()) {
 				char c=f.Step();
 				switch (c) {
-				case '{': f.ReadLeftBrace(); break;
-				case '}': f.ReadRightBrace(); break;
-				case ',': f.ReadComma(); break;
-				case '=': f.ReadEqualsSign(); break;
+				case TConfig::scope_begin: f.ReadLeftBrace(); break;
+				case TConfig::scope_end: f.ReadRightBrace(); break;
+				case TConfig::separator: f.ReadComma(); break;
+				case TConfig::equals: f.ReadEqualsSign(); break;
 				default : f.Continue(); break;
 				}
 			}

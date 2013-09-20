@@ -55,6 +55,8 @@ namespace {
 struct test_config {
 	static const char scope_begin='[';
 	static const char scope_end=']';
+	static const char separator=',';
+	static const char equals='=';
 	static const size_t index_begin=0;
 };
 }
