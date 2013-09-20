@@ -8,6 +8,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
+/*
 ANON_TEST_CASE() {
 	auto empty=ff::format("");
 	REQUIRE(empty.now()=="");
@@ -78,3 +79,4 @@ TEST_CASE("format/implementation defined peculiarities","some cases are not so o
 	REQUIRE(ff::format("{ 01 }").with("a").now()=="a");
 	REQUIRE(ff::format("{ 0 1 }").with("a").now()=="{ 0 1 }");
 }
+*/
