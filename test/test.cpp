@@ -8,7 +8,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
-/*
+
 ANON_TEST_CASE() {
 	auto empty=ff::format("");
 	REQUIRE(empty.now()=="");
@@ -62,7 +62,7 @@ struct test_config {
 TEST_CASE("format/custom config","formatting should be somewhat configurable") {
 	std::string fmt("[1][0]");
 	
-	REQUIRE(ff::format<ff::TDefaultConfig>(fmt).with('a').also_with('b').now()==fmt);
+	REQUIRE(ff::format(fmt).with('a').also_with('b').now()==fmt);
 
 	REQUIRE(ff::format<test_config>(fmt).with('a').also_with('b').now()=="ba");
 }
@@ -79,4 +79,3 @@ TEST_CASE("format/implementation defined peculiarities","some cases are not so o
 	REQUIRE(ff::format("{ 01 }").with("a").now()=="a");
 	REQUIRE(ff::format("{ 0 1 }").with("a").now()=="{ 0 1 }");
 }
-*/

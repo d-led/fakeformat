@@ -22,6 +22,8 @@ namespace ff {
 		static const size_t index_begin=1;
 	};
 
+	typedef std::map<std::string,std::string> TKeyValueMap;
+
 	namespace detail {
 		
 		template <
@@ -63,6 +65,9 @@ namespace ff {
 				impl.str("");
 			}
 
+			void configure(TKeyValueMap const& config) {
+			}
+
 		private:
 			mutable TStream impl;
 		};
@@ -88,7 +93,7 @@ namespace ff {
 	struct Placeholder {
 		int id;
 		int length;
-		std::map<std::string,std::string> config;
+		TKeyValueMap config;
 		Placeholder():id(START_POS),length(START_POS){}
 	};
 
@@ -542,7 +547,7 @@ class FormatParser: public FormatContext
 	public:
 		formatter(TString fmt):
 		format_string(fmt),
-		pos(0)
+		pos(TConfig::index_begin)
 		{
 			parse_format_string();
 		}
@@ -551,35 +556,42 @@ class FormatParser: public FormatContext
 
 		template <typename T>
 		formatter& with(T const& param) {
-			stream.clear();
-			stream.put(param);
-			parameters.push_back(stream.str());
+			for (Placeholders::const_iterator it=placeholders.begin();
+				it!=placeholders.end();
+				++it) {
+					stream.clear();
+					if (it->second.id==pos) {
+						stream.configure(it->second.config);
+					}
+					stream.put(param);
+					parameters.push_back(stream.str());
+			}
 			pos++;
 			return *this;
 		}
 
-	// 	template <typename T>
-	// 	formatter& also_with(T const& param) {
-	// 		return with(param);
-	// 	}
+	 	template <typename T>
+	 	formatter& also_with(T const& param) {
+	 		return with(param);
+	 	}
 
-	// 	TString now() const {
-	// 		size_t param_count=parameters.size();
+	 	TString now() const {
+	 		size_t param_count=parameters.size();
 
-	// 		if (param_count==0) {
-	// 			return format_string;
-	// 		} else {
-	// 			return parse_and_format();
-	// 		}
-	// 	}
+	 		if (param_count==0) {
+	 			return format_string;
+	 		} else {
+	 			return assemble_string();
+	 		}
+	 	}
 
-	// 	void clear_parameters() {
-	// 		parameters.clear();
-	// 	}
+	 	void clear_parameters() {
+	 		parameters.clear();
+	 	}
 
-	// private:
+	 private:
 
-	// 	TString parse_and_format() const {
+	 	TString assemble_string() const {
 	// 		stream.clear();
 
 	// 		TPos last=format_string.begin();
@@ -621,8 +633,8 @@ class FormatParser: public FormatContext
 	// 		if (last!=format_string.end())
 	// 			stream.put(last,format_string.end());
 
-	// 		return stream.str();
-	// 	}
+			return stream.str();
+	 	}
 
 	// 	bool valid_range(int key) const {
 	// 		return key>=0 && (size_t)key<parameters.size();
@@ -655,11 +667,11 @@ class FormatParser: public FormatContext
 	 	TStream stream; // Caution: the stream is shared within the implementation!
 	};
 
+	template <typename TConfig>
 	formatter<TConfig> format(TString fmt) {
 		return formatter<TConfig>(fmt);
 	}
 
-	template <typename TConfig>
 	formatter<TConfig> format(TString fmt) {
 		return formatter<TConfig>(fmt);
 	}
