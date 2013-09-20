@@ -281,9 +281,9 @@ class FormatParserReadingKeyState : public FormatParserState
   public: 
     virtual const char* StateName() const
         { return "ReadingKey"; }
-    virtual void ReadEqualsSign( FormatParser& );
     virtual void ReadComma( FormatParser& );
     virtual void ReadLeftBrace( FormatParser& );
+    virtual void ReadEqualsSign( FormatParser& );
     virtual void ReadRightBrace( FormatParser& );
 };
 //----------------------------------------------
@@ -304,9 +304,9 @@ class FormatParserReadingPlaceholderState : public FormatParserState
   public: 
     virtual const char* StateName() const
         { return "ReadingPlaceholder"; }
-    virtual void ReadLeftBrace( FormatParser& );
     virtual void ReadRightBrace( FormatParser& );
     virtual void ReadComma( FormatParser& );
+    virtual void ReadLeftBrace( FormatParser& );
 };
 //----------------------------------------------
 // State: ReadingValue
@@ -316,9 +316,9 @@ class FormatParserReadingValueState : public FormatParserState
   public: 
     virtual const char* StateName() const
         { return "ReadingValue"; }
+    virtual void ReadComma( FormatParser& );
     virtual void ReadRightBrace( FormatParser& );
     virtual void ReadLeftBrace( FormatParser& );
-    virtual void ReadComma( FormatParser& );
 };
 //----------------------------------------------
 // FormatParser: The Finite State Machine class
@@ -356,7 +356,7 @@ class FormatParser: public FormatContext
 // FSM:       FormatParser
 // Context:   FormatContext
 // Version:   
-// Generated: Freitag 09/20/2013 at 23:10:19 MESZ
+// Generated: Freitag 09/20/2013 at 23:15:04 MESZ
 //
 
 
@@ -399,19 +399,6 @@ void FormatParserState::ReadComma(FormatParser& s)
 //----------------------------------------------
 
 // Starting State: ReadingKey
-// Event:          ReadEqualsSign
-//
-void FormatParserReadingKeyState::ReadEqualsSign( FormatParser& s )
-{
-
-    s.AddKey();
-    s.StartAddingValue();
-
-    // Change the state
-    s.SetState(FormatParser::ReadingValue);
-}
-
-// Starting State: ReadingKey
 // Event:          ReadComma
 //
 void FormatParserReadingKeyState::ReadComma( FormatParser& s )
@@ -434,6 +421,19 @@ void FormatParserReadingKeyState::ReadLeftBrace( FormatParser& s )
 
     // Change the state
     s.SetState(FormatParser::ReadingPlaceholder);
+}
+
+// Starting State: ReadingKey
+// Event:          ReadEqualsSign
+//
+void FormatParserReadingKeyState::ReadEqualsSign( FormatParser& s )
+{
+
+    s.AddKey();
+    s.StartAddingValue();
+
+    // Change the state
+    s.SetState(FormatParser::ReadingValue);
 }
 
 // Starting State: ReadingKey
@@ -469,18 +469,6 @@ void FormatParserGeneralState::ReadLeftBrace( FormatParser& s )
 //----------------------------------------------
 
 // Starting State: ReadingPlaceholder
-// Event:          ReadLeftBrace
-//
-void FormatParserReadingPlaceholderState::ReadLeftBrace( FormatParser& s )
-{
-
-    s.StartCollectingPlaceholder();
-
-    // Change the state
-    s.SetState(FormatParser::ReadingPlaceholder);
-}
-
-// Starting State: ReadingPlaceholder
 // Event:          ReadRightBrace
 //
 void FormatParserReadingPlaceholderState::ReadRightBrace( FormatParser& s )
@@ -506,9 +494,33 @@ void FormatParserReadingPlaceholderState::ReadComma( FormatParser& s )
     s.SetState(FormatParser::ReadingKey);
 }
 
+// Starting State: ReadingPlaceholder
+// Event:          ReadLeftBrace
+//
+void FormatParserReadingPlaceholderState::ReadLeftBrace( FormatParser& s )
+{
+
+    s.StartCollectingPlaceholder();
+
+    // Change the state
+    s.SetState(FormatParser::ReadingPlaceholder);
+}
+
 //----------------------------------------------
 // ReadingValue Actions and Transitions
 //----------------------------------------------
+
+// Starting State: ReadingValue
+// Event:          ReadComma
+//
+void FormatParserReadingValueState::ReadComma( FormatParser& s )
+{
+
+    s.AddValue();
+
+    // Change the state
+    s.SetState(FormatParser::ReadingKey);
+}
 
 // Starting State: ReadingValue
 // Event:          ReadRightBrace
@@ -533,18 +545,6 @@ void FormatParserReadingValueState::ReadLeftBrace( FormatParser& s )
 
     // Change the state
     s.SetState(FormatParser::ReadingPlaceholder);
-}
-
-// Starting State: ReadingValue
-// Event:          ReadComma
-//
-void FormatParserReadingValueState::ReadComma( FormatParser& s )
-{
-
-    s.AddValue();
-
-    // Change the state
-    s.SetState(FormatParser::ReadingKey);
 }
 
 //----------------------------------------------
