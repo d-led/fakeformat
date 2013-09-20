@@ -18,7 +18,7 @@ namespace ff {
 		static const TChar scope_begin='{';
 		static const TChar scope_end='}';
 		static const TChar separator=',';
-		static const TChar equals=',';
+		static const TChar equals='=';
 		static const size_t index_begin=1;
 	};
 
@@ -592,53 +592,15 @@ class FormatParser: public FormatContext
 	 private:
 
 	 	TString assemble_string() const {
-	// 		stream.clear();
+			std::string res(format_string);
 
-	// 		TPos last=format_string.begin();
-	// 		for (TPos current=format_string.begin();
-	// 			current!=format_string.end();
-	// 			++current) {
+			for (int it=placeholders.size()-1;
+				 it>=0;
+				 it--) {
+			}
 
-	// 			// predicate can be refactored
-	// 			if (*current==TConfig::scope_begin) {
-	// 				stream.put(last,current);
-	// 				last=current;
-	// 				continue;
-	// 			}
-
-	// 			// predicate can be refactored
-	// 			if (*current==TConfig::scope_end) {
-	// 				TPos key_beginning=last;
-	// 				++key_beginning;
-
-	// 				int key=string_to_key(key_beginning,current);
-	// 				if (valid_range(key)) {
-	// 					stream.put(parameters[key]);
-	// 					//peek
-	// 					++current;
-	// 					last=current;
-	// 					if (current==format_string.end())
-	// 						break;
-	// 					else
-	// 						continue;
-	// 				} else {
-	// 					stream.put(last,current);
-	// 					last=current;
-	// 					continue;
-	// 				}
-	// 			}
-	// 		}
-
-	// 		// finish writing
-	// 		if (last!=format_string.end())
-	// 			stream.put(last,format_string.end());
-
-			return stream.str();
+			return res;
 	 	}
-
-	// 	bool valid_range(int key) const {
-	// 		return key>=0 && (size_t)key<parameters.size();
-	// 	}
 
 	private:
 		void parse_format_string() {
