@@ -98,4 +98,6 @@ TEST_CASE("formatting numbers as fixed") {
 	REQUIRE(ff::format("{1}{1,number=fix}{1}{1,num=fixed}").with(1.1).now()=="1.11.1000001.11.100000");
 }
 
-
+TEST_CASE("setting width") {
+	REQUIRE(ff::format("{1}{1,width=3}{1}{1,w=0}").with(1).now()=="1  111");
+}

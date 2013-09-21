@@ -21,6 +21,14 @@ namespace ff {
 		static const TChar separator=',';
 		static const TChar equals='=';
 		static const size_t index_begin=1;
+		static bool string_to_key(std::string const& to_parse,int& res) {
+			std::istringstream ss(to_parse);
+			ss.imbue(std::locale::classic());
+			ss >> res;
+			if (!ss.fail() && ss.eof())
+				return true;
+			return false;
+		}
 	};
 
 	typedef std::map<std::string,std::string> TKeyValueMap;
@@ -90,6 +98,13 @@ namespace ff {
 											|| it->second=="fixed") {
 									 impl<<std::fixed;
 								 }
+						 } else if (it->first=="w"
+									|| it->first=="width") {
+										int width=-1;
+										if (TConfig::string_to_key(it->second,width)
+											&& width>0) {
+												impl.width(width);
+										}
 						 }
 				}
 			}
@@ -338,7 +353,7 @@ class FormatParser: public FormatContext
 // FSM:       FormatParser
 // Context:   FormatContext
 // Version:   
-// Generated: Samstag 09/21/2013 at 11:17:08 MESZ
+// Generated: Samstag 09/21/2013 at 14:44:32 MESZ
 //
 
 
