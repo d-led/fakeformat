@@ -8,7 +8,15 @@ Note that, unlike in `String.Format` or [python](http://docs.python.org/2/librar
 usage
 =====
 
+building
+--------
+
 Include `fakeformat.hpp` and compile `fakeformat.cpp`
+
+The [premake4](http://industriousone.com/premake)-generated makefiles for Visual Studio 2012 and gnu make can be found in the Build folder.
+
+formatting strings
+------------------
 
 Usage is extermely simple in case some prerequisites are met:
 - you use STL for which there are default implementations and configurations
@@ -40,10 +48,18 @@ struct test_config {
 	static const char separator=',';
 	static const char equals='=';
 	static const size_t index_begin=0;
+	static bool string_to_key(std::string const& to_parse,int& res) {
+		... parsing
+		if (parsed...)
+			return true;
+		return false;
+	}
 };
 //...
 REQUIRE(ff::formatter<test_config>("[1][0]").with('a').also_with('b').now()=="ba");
 ````
+
+The function `string_to_key` is used for parsing integers from strings. It is currently safe, but very inefficient. Feel free to modify that one. Check out [an article](http://www.kumobius.com/2013/08/c-string-to-int/) on converting strings to integers.  
 
 format modifiers
 ----------------
