@@ -93,6 +93,11 @@ Currently tested (Win32 and x64) with Visual Studio 2012 Express, and 32 bit in 
 
 Testing is done using [Catch](https://github.com/philsquared/Catch).
 
+structure
+---------
+
+Check out the [blog post](http://ledentsov.de/2013/09/21/fakeformat-ci/)
+
 license
 =======
 
