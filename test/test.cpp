@@ -115,3 +115,13 @@ TEST_CASE("setting alignment") {
 TEST_CASE("setting precision") {
 	REQUIRE(ff::format("{1,num=fixed,precision=3}{1}").with(1.0).now()=="1.0001");
 }
+
+TEST_CASE("setting fill") {
+	REQUIRE(ff::format("{1,width=3,left,fill=-}{1}").with(1).now()=="1--1");
+
+	// border case
+	REQUIRE(ff::format("{1,width=3,left,fill==}{1}").with(1).now()=="1==1");
+
+	//unsupported
+	REQUIRE(ff::format("{1,width=3,left,fill=}}{1}").with(1).now()=="1  }1");
+}

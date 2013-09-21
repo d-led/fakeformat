@@ -113,6 +113,10 @@ namespace ff {
 											&& precision>0) {
 												impl.precision(precision);
 										}
+						 } else if (it->first=="fill") {
+										if (it->second.length()==1) {
+												impl.fill(it->second[0]);
+										}
 						 }
 				}
 			}

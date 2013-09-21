@@ -78,6 +78,8 @@ Some format modifiers similar to [Boost.Locale](http://www.boost.org/doc/libs/1_
 - right
 - precision
  - number parameter required
+- fill
+ - a single character is allowed. Literal `}` is not supported yet
 
 test
 ----
