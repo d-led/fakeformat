@@ -104,3 +104,7 @@ TEST_CASE("setting width") {
 TEST_CASE("setting alignment") {
 	REQUIRE(ff::format("{1,width=3,left}{1,right,width=3}").with(1).now()=="1    1");
 }
+
+TEST_CASE("setting precision") {
+	REQUIRE(ff::format("{1,num=fixed,precision=3}{1}").with(1.0).now()=="1.0001");
+}

@@ -56,6 +56,8 @@ Some format modifiers similar to [Boost.Locale](http://www.boost.org/doc/libs/1_
  - fix or fixed
 - `width` or `w`
  - number parameter required
+- left
+- right
 
 test
 ----

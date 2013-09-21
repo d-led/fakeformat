@@ -109,6 +109,12 @@ namespace ff {
 							 impl<<std::left;
 						 } else if (it->first=="right") {
 							 impl<<std::right;
+						 } else if (it->first=="precision") {
+										int precision=-1;
+										if (TConfig::string_to_key(it->second,precision)
+											&& precision>0) {
+												impl.precision(precision);
+										}
 						 }
 				}
 			}
