@@ -10,6 +10,7 @@
 #include <vector>
 #include <map>
 #include <utility>
+#include <iomanip>
 
 namespace ff {
 
@@ -34,10 +35,14 @@ namespace ff {
 
 		public:
 			stream ()
-			{}
+			{
+				flags=impl.flags();
+			}
 
 			stream (const stream &)
-			{}
+			{
+				flags=impl.flags();
+			}
 
 			stream & operator = (const stream &) {
 				return *this;
@@ -63,13 +68,25 @@ namespace ff {
 
 			void clear() const {
 				impl.str("");
+				impl.flags(flags);
 			}
 
 			void configure(TKeyValueMap const& config) {
+				for (TKeyValueMap::const_iterator it=config.begin();
+					 it!=config.end();
+					 ++it) {
+						 if (it->first=="num"
+							 || it->first=="number") {
+								 if (it->second=="hex") {
+									 impl<<std::hex;
+								 }
+						 }
+				}
 			}
 
 		private:
 			mutable TStream impl;
+			int flags;
 		};
 	}
 
