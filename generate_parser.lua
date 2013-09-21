@@ -41,6 +41,24 @@ local function filter_lines(t,start_line,end_line)
     return res
 end
 
+local function remove_segments(t,segment_start,segment_end)
+    local res={}
+    local ignoring=false
+    for k,v in ipairs(t) do
+        if not ignoring and v:find(segment_start) then
+            ignoring = true
+        end
+
+        if not ignoring then res[#res+1]=v end
+
+        if ignoring and v:find(segment_end) then
+            ignoring = false
+        end
+    end
+    return res
+end
+
+
 ---read fakeformat.hpp---
 local ff_lines, ff_insert_start, ff_insert_end = get_lines("fakeformat.hpp",[[///PARSER BEGIN///]],[[///PARSER END///]])
 
@@ -58,6 +76,7 @@ end
 fc_insert_start=fc_insert_start+1
 fc_insert_end=fc_insert_end-1
 local format_context_lines=filter_lines(fc_lines,fc_insert_start,fc_insert_end)
+format_context_lines=remove_segments(format_context_lines,[[DO_DEMO]],[[#endif]])
 
 ---prepare format.h---
 local fh_lines, fh_insert_start, fh_insert_end = get_lines("smc_format/format.h",[[#include "format_context.h"]],[[#endif]])

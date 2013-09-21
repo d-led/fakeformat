@@ -112,10 +112,6 @@ public:
 
 	bool IsAtEnd() const {
 		bool res=state.pos >= (static_cast<int>(state.format_string.size())-1);
-#ifdef DO_DEMO
-		if (res)
-			rlutil::setColor(rlutil::GREY);
-#endif
 		return res;
 	}
 
@@ -135,9 +131,6 @@ public:
 		state.format_string=_;
 		state.pos=START_POS;
 		ResetPlaceholderState();
-#if DO_DEMO
-		rlutil::setColor(rlutil::WHITE);
-#endif
 	}
 
 	void TryAddPlaceholder() {
@@ -155,9 +148,6 @@ public:
 		state.last_left_brace=state.pos;
 		state.last_key_start=state.last_value_start=START_POS;
 		state.last_key="";
-#if DO_DEMO
-		rlutil::setColor(rlutil::BLUE);
-#endif
 	}
 
 	void ParsePlaceholder() {
@@ -176,9 +166,6 @@ public:
 		state.last_key_start=state.pos;
 		state.last_value_start=START_POS;
 		state.last_key="";
-#if DO_DEMO
-		rlutil::setColor(rlutil::YELLOW);
-#endif
 	}
 
 	void AddKey() {
@@ -190,17 +177,11 @@ public:
 
 	void ContinueCollectingKeys() {
 		state.last_key_start=state.pos;
-#if DO_DEMO
-		rlutil::setColor(rlutil::WHITE);
-#endif
 	}
 
 	void StartAddingValue() {
 		state.last_key_start=START_POS;
 		state.last_value_start=state.pos;
-#if DO_DEMO
-		rlutil::setColor(rlutil::MAGENTA);
-#endif
 	}
 
 	void FinishCollectingPlaceholder() {
@@ -213,22 +194,9 @@ public:
 		}
 
 		ResetPlaceholderState();
-#if DO_DEMO
-		rlutil::setColor(rlutil::LIGHTBLUE);
-#endif
 	}
 
 	void Continue() {
-#if DO_DEMO
-		if (state.last_value_start>=0)
-			rlutil::setColor(rlutil::LIGHTRED);
-		else if (state.last_key_start>=0)
-			rlutil::setColor(rlutil::YELLOW);
-		else if (state.last_left_brace>=0)
-			rlutil::setColor(rlutil::GREEN);
-		else
-			rlutil::setColor(rlutil::WHITE);
-#endif
 	}
 
 	void FSMError(const char*, const char*) {
@@ -238,20 +206,6 @@ public:
 		return state.placeholders;
 	}
 
-#if DO_DEMO
-	~FormatContext() {
-		for (auto k: state.placeholders) {
-			std::cout<<k.first<<"-"<<k.first+k.second.length-1<<": "<<k.second.id<<" ";
-			for (auto v: k.second.config) {
-				std::cout<<v.first;
-				if (v.second.length())
-					std::cout<<"="<<v.second;
-				std::cout<<" ";
-			}
-			std::cout<<std::endl;
-		}
-	}
-#endif
 
 };
 
@@ -356,7 +310,7 @@ class FormatParser: public FormatContext
 // FSM:       FormatParser
 // Context:   FormatContext
 // Version:   
-// Generated: Freitag 09/20/2013 at 23:15:04 MESZ
+// Generated: Samstag 09/21/2013 at 10:58:16 MESZ
 //
 
 
