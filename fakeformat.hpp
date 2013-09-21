@@ -84,6 +84,9 @@ namespace ff {
 								 } else if (it->second=="sci"
 											|| it->second=="scientific") {
 									 impl<<std::scientific;
+								 } else if (it->second=="fix"
+											|| it->second=="fixed") {
+									 impl<<std::fixed;
 								 }
 						 }
 				}
