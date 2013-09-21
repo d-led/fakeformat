@@ -100,3 +100,7 @@ TEST_CASE("formatting numbers as fixed") {
 TEST_CASE("setting width") {
 	REQUIRE(ff::format("{1}{1,width=3}{1}{1,w=0}").with(1).now()=="1  111");
 }
+
+TEST_CASE("setting alignment") {
+	REQUIRE(ff::format("{1,width=3,left}{1,right,width=3}").with(1).now()=="1    1");
+}

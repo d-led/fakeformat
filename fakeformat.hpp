@@ -105,6 +105,10 @@ namespace ff {
 											&& width>0) {
 												impl.width(width);
 										}
+						 } else if (it->first=="left") {
+							 impl<<std::left;
+						 } else if (it->first=="right") {
+							 impl<<std::right;
 						 }
 				}
 			}
