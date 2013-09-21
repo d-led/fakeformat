@@ -35,7 +35,7 @@ function CompilerSpecificConfiguration()
 
 	configuration {"gmake"}
 		postbuildcommands  { "$(TARGET)" }
-		buildoptions { "-std=c++11" }
+		buildoptions { "-std=c++0x" }
 
 	configuration {"codeblocks" }
 		postbuildcommands { "$(TARGET_OUTPUT_FILE)"}
@@ -68,6 +68,8 @@ local tests=project "test"
 	language "C++"
 	files {
 		path.join(basedir,"**.cpp"),
-		path.join(basedir,"**.h")
+		path.join(basedir,"**.h"),
+		path.join(basedir,"../fakeformat.cpp")
 	}
 	CompilerSpecificConfiguration()
+
