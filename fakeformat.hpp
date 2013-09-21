@@ -81,9 +81,9 @@ namespace ff {
 				impl.flags(flags);
 			}
 
-			void configure(TKeyValueMap const& config) {
-				for (TKeyValueMap::const_iterator it=config.begin();
-					 it!=config.end();
+			void configure(TKeyValueMap const& config_map) {
+				for (TKeyValueMap::const_iterator it=config_map.begin();
+					 it!=config_map.end();
 					 ++it) {
 						 if (it->first=="num"
 							 || it->first=="number") {
@@ -101,7 +101,7 @@ namespace ff {
 						 } else if (it->first=="w"
 									|| it->first=="width") {
 										int width=-1;
-										if (TConfig::string_to_key(it->second,width)
+										if (config<char>::string_to_key(it->second,width)
 											&& width>0) {
 												impl.width(width);
 										}
@@ -111,7 +111,7 @@ namespace ff {
 							 impl<<std::right;
 						 } else if (it->first=="precision") {
 										int precision=-1;
-										if (TConfig::string_to_key(it->second,precision)
+										if (config<char>::string_to_key(it->second,precision)
 											&& precision>0) {
 												impl.precision(precision);
 										}
@@ -121,7 +121,7 @@ namespace ff {
 
 		private:
 			mutable TStream impl;
-			int flags;
+			std::ios_base::fmtflags flags;
 		};
 	}
 

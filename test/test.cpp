@@ -4,6 +4,8 @@
 #include "../fakeformat.hpp"
 
 #include <string>
+#include <sstream>
+#include <iomanip>
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
@@ -90,7 +92,12 @@ TEST_CASE("formatting numbers as oct") {
 }
 
 TEST_CASE("formatting numbers as scientific") {
-	REQUIRE(ff::format("{1}{1,number=sci}{1}{1,num=scientific}").with(1.1).now()=="1.11.100000e+0001.11.100000e+000");
+    std::stringstream ss;
+    ss<<1.1;
+    ss<<std::scientific<<1.1;
+    ss<<"1.1";
+    ss<<1.1;
+	REQUIRE(ff::format("{1}{1,number=sci}{1}{1,num=scientific}").with(1.1).now()==ss.str());
 }
 
 TEST_CASE("formatting numbers as fixed") {
