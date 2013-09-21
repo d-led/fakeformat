@@ -3,8 +3,6 @@
 // Copyright 2013, Dmitry Ledentsov
 // Released under the MIT License: http://www.opensource.org/licenses/mit-license.php
 
-#include <stdlib.h>
-#include <stdexcept>
 #include <string>
 #include <sstream>
 #include <vector>
