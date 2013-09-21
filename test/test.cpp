@@ -8,7 +8,6 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
-
 TEST_CASE() {
 	auto empty=ff::format("");
 	REQUIRE(empty.now()=="");
@@ -66,7 +65,7 @@ TEST_CASE("format/custom config","formatting should be somewhat configurable") {
 	
 	REQUIRE(ff::format(fmt).with('a').also_with('b').now()==fmt);
 
-	REQUIRE(ff::format<test_config>(fmt).with('a').also_with('b').now()=="ba");
+	REQUIRE(ff::formatter<test_config>(fmt).with('a').also_with('b').now()=="ba");
 }
 
 TEST_CASE("format/border cases","the behavior should produce the least astonishment") {

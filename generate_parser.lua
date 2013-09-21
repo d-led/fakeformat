@@ -104,9 +104,9 @@ end
 for k,v in ipairs(format_h_lines) do
        fakeformat_new[#fakeformat_new+1]=v
 end
-for k,v in ipairs(format_cpp_lines) do
-       fakeformat_new[#fakeformat_new+1]=v
-end
+-- for k,v in ipairs(format_cpp_lines) do
+--        fakeformat_new[#fakeformat_new+1]=v
+-- end
 for k,v in ipairs(ff_lines) do
     if k>=ff_insert_end then
         fakeformat_new[#fakeformat_new+1]=v

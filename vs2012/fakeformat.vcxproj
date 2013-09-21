@@ -155,9 +155,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\test\linker_test.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\fakeformat.cpp" />
+    <ClCompile Include="..\test\linker_test.cpp" />
     <ClCompile Include="..\test\test.cpp" />
   </ItemGroup>
   <ItemGroup>

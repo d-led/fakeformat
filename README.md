@@ -1,12 +1,14 @@
 fakeformat
 ==========
 
-This small header is intended as a fast c++ prototyping tool in cases where something like [.NET](http://msdn.microsoft.com/en-us/library/system.string.format.aspx#Format2_Example) `String.Format` or [Boost.Locale](http://www.boost.org/doc/libs/1_53_0/libs/locale/doc/html/localized_text_formatting.html)'s `format` is required, one doesn't need performance, doesn't want to use any large library and doesn't need fancy format specifiers.
+This small library is intended as a fast c++ prototyping tool in cases where something like [.NET](http://msdn.microsoft.com/en-us/library/system.string.format.aspx#Format2_Example) `String.Format` or [Boost.Locale](http://www.boost.org/doc/libs/1_53_0/libs/locale/doc/html/localized_text_formatting.html)'s `format` is required, one doesn't need performance, doesn't want to use any large library and doesn't need fancy format specifiers.
 
 Note that, unlike in `String.Format` or [python](http://docs.python.org/2/library/string.html#format-examples)'s `format`, Boost.Locale formatting language starts the placeholders at `1`. Hence, the configurability of `fakeformat`
 
 usage
 =====
+
+Include `fakeformat.hpp` and compile `fakeformat.cpp`
 
 Usage is extermely simple in case some prerequisites are met:
 - you use STL for which there are default implementations and configurations
@@ -40,15 +42,28 @@ struct test_config {
 	static const size_t index_begin=0;
 };
 //...
-REQUIRE(ff::format<test_config>("[1][0]").with('a').also_with('b').now()=="ba");
+REQUIRE(ff::formatter<test_config>("[1][0]").with('a').also_with('b').now()=="ba");
 ````
+
+format modifiers
+----------------
+
+Some format modifiers similar to [Boost.Locale](http://www.boost.org/doc/libs/1_52_0/libs/locale/doc/html/localized_text_formatting.html) are supported:
+- `num` or `number` with parameters:
+ - hex
+ - oct
+ - sci or scientific
+ - fix or fixed
+- `width` or `w`
+ - number parameter required
+
+test
+----
 
 For the rest of the API, check out the [tests](https://github.com/d-led/fakeformat/tree/master/test).
 
 status
 ------
-
-_not usable from two compilation units at the moment_
 
 Currently tested (Win32 and x64) with Visual Studio 2012 Express, and 32 bit in gcc 4.7.3, but should be no problem to test and fix on other compilers and platforms. A premake4 script should help with that task.
 
