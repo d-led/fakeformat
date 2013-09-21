@@ -85,3 +85,7 @@ TEST_CASE("placeholder parsing is strict without whitespaces") {
 TEST_CASE("formatting numbers as hex") {
 	REQUIRE(ff::format("{1}{1,number=hex}{1}{1,num=hex}").with(10).now()=="10a10a");
 }
+
+TEST_CASE("formatting numbers as oct") {
+	REQUIRE(ff::format("{1}{1,number=oct}{1}{1,num=oct}").with(10).now()=="10121012");
+}

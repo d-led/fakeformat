@@ -79,6 +79,8 @@ namespace ff {
 							 || it->first=="number") {
 								 if (it->second=="hex") {
 									 impl<<std::hex;
+								 } else if (it->second=="oct") {
+									 impl<<std::oct;
 								 }
 						 }
 				}
