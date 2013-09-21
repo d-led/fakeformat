@@ -81,6 +81,9 @@ namespace ff {
 									 impl<<std::hex;
 								 } else if (it->second=="oct") {
 									 impl<<std::oct;
+								 } else if (it->second=="sci"
+											|| it->second=="scientific") {
+									 impl<<std::scientific;
 								 }
 						 }
 				}

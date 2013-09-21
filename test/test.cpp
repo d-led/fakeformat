@@ -89,3 +89,8 @@ TEST_CASE("formatting numbers as hex") {
 TEST_CASE("formatting numbers as oct") {
 	REQUIRE(ff::format("{1}{1,number=oct}{1}{1,num=oct}").with(10).now()=="10121012");
 }
+
+TEST_CASE("formatting numbers as scientific") {
+	REQUIRE(ff::format("{1}{1,number=sci}{1}{1,num=scientific}").with(1.1).now()=="1.11.100000e+0001.11.100000e+000");
+}
+
