@@ -118,3 +118,17 @@ local fakeformat_hpp_new=table.concat(fakeformat_new,"\n"):gsub([[#include "form
 local ffn=assert(io.open("fakeformat.hpp","w"))
 ffn:write(fakeformat_hpp_new)
 ffn:close()
+
+--write cpp(temporary)--
+local cpplines={}
+cpplines[#cpplines+1]=[[#include "fakeformat.hpp"]]
+cpplines[#cpplines+1]=[[namespace ff {]]
+for k,v in ipairs(format_cpp_lines) do
+       cpplines[#cpplines+1]=v
+end
+cpplines[#cpplines+1]=[[}]]
+cpplines[#cpplines+1]=[[]]
+local fakeformat_cpp_new=table.concat(cpplines,"\n"):gsub([[#include "format.h"]],"")
+local ffc=assert(io.open("fakeformat.cpp","w"))
+ffc:write(fakeformat_cpp_new)
+ffc:close()
