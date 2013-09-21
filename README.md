@@ -35,7 +35,9 @@ If you need a slight modification of the language, a configuration is no big dea
 struct test_config {
 	static const char scope_begin='[';
 	static const char scope_end=']';
-	static const size_t index_begin=0; // the indices should start from 0
+	static const char separator=',';
+	static const char equals='=';
+	static const size_t index_begin=0;
 };
 //...
 REQUIRE(ff::format<test_config>("[1][0]").with('a').also_with('b').now()=="ba");
