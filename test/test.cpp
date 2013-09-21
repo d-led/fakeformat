@@ -94,7 +94,7 @@ TEST_CASE("formatting numbers as scientific") {
 	REQUIRE(ff::format("{1}{1,number=sci}{1}{1,num=scientific}").with(1.1).now()=="1.11.100000e+0001.11.100000e+000");
 }
 
-TEST_CASE("formatting numbers as scientific") {
+TEST_CASE("formatting numbers as fixed") {
 	REQUIRE(ff::format("{1}{1,number=fix}{1}{1,num=fixed}").with(1.1).now()=="1.11.1000001.11.100000");
 }
 

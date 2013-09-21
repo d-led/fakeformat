@@ -37,11 +37,13 @@ namespace ff {
 			stream ()
 			{
 				flags=impl.flags();
+				impl.imbue(std::locale());
 			}
 
 			stream (const stream &)
 			{
 				flags=impl.flags();
+				impl.imbue(std::locale());
 			}
 
 			stream & operator = (const stream &) {
