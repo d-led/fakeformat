@@ -58,6 +58,7 @@ Some format modifiers similar to [Boost.Locale](http://www.boost.org/doc/libs/1_
  - number parameter required
 - left
 - right
+- precision
 
 test
 ----
