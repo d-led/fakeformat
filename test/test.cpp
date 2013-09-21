@@ -9,7 +9,7 @@
 #include <catch.hpp>
 
 
-ANON_TEST_CASE() {
+TEST_CASE() {
 	auto empty=ff::format("");
 	REQUIRE(empty.now()=="");
 
@@ -75,9 +75,9 @@ TEST_CASE("format/border cases","the behavior should produce the least astonishm
 	REQUIRE(ff::format("{0}").with("a").now()=="{0}");
 }
 
-TEST_CASE("format/implementation defined peculiarities","some cases are not so obvious") {
-	REQUIRE(ff::format("{1x}").with("a").now()=="a");
+TEST_CASE("placeholder parsing is strict without whitespaces") {
+	REQUIRE(ff::format("{1x}").with("a").now()=="{1x}");
 	REQUIRE(ff::format("{x1}").with("a").now()=="{x1}");
-	REQUIRE(ff::format("{ 01 }").with("a").now()=="a");
+	REQUIRE(ff::format("{ 01 }").with("a").now()=="{ 01 }");
 	REQUIRE(ff::format("{ 0 1 }").with("a").now()=="{ 0 1 }");
 }

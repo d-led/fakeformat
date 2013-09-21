@@ -99,13 +99,14 @@ class FormatContext
 		Placeholders placeholders;
 	} state;
 
-	static int string_to_key(std::string const& to_parse) {
+	int string_to_key(std::string const& to_parse) {
 		int res=START_POS;
-		//c++11
-		try {
-			res=std::stoi(to_parse);
-		} catch (std::exception&) {}
-		return res;
+		std::istringstream ss(to_parse);
+		ss.imbue(std::locale::classic());
+		ss >> res;
+		if (!ss.fail() && ss.eof())
+			return res;
+		return START_POS;
 	}
 
 public:
@@ -310,7 +311,7 @@ class FormatParser: public FormatContext
 // FSM:       FormatParser
 // Context:   FormatContext
 // Version:   
-// Generated: Samstag 09/21/2013 at 10:58:16 MESZ
+// Generated: Samstag 09/21/2013 at 11:17:08 MESZ
 //
 
 
