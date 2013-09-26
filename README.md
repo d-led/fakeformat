@@ -17,6 +17,11 @@ Include `fakeformat.hpp` and compile `fakeformat.cpp`
 
 The [premake4](http://industriousone.com/premake)-generated makefiles for Visual Studio 2012 and gnu make can be found in the Build folder.
 
+trying out
+----------
+
+You can try it out by cloning [this ideone code](http://ideone.com/kYcGJV).
+
 formatting strings
 ------------------
 
