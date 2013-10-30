@@ -264,70 +264,141 @@ public:
 
 };
 
-
-// Forward Declarations
-
-class FormatParser;
-
 //----------------------------------------------
 // FormatParserState: The base state class
 //----------------------------------------------
+template <typename FormatParser>
 class FormatParserState
 {
   public: 
     virtual const char* StateName() const = 0;
-    virtual void ReadEqualsSign( FormatParser& );
-    virtual void ReadRightBrace( FormatParser& );
-    virtual void ReadLeftBrace( FormatParser& );
-    virtual void ReadComma( FormatParser& );
+    virtual void ReadEqualsSign( FormatParser& s ) { s.FSMError("ReadEqualsSign", s.GetState().StateName()); }
+    virtual void ReadRightBrace( FormatParser& s ) { s.FSMError("ReadRightBrace", s.GetState().StateName()); }
+    virtual void ReadLeftBrace( FormatParser& s )  { s.FSMError("ReadLeftBrace", s.GetState().StateName()); }
+    virtual void ReadComma( FormatParser& s ) { s.FSMError("ReadComma", s.GetState().StateName()); }
 };
 
 //----------------------------------------------
 // State: ReadingKey
 //----------------------------------------------
-class FormatParserReadingKeyState : public FormatParserState
+template <typename FormatParser>
+class FormatParserReadingKeyState : public FormatParserState<FormatParser>
 {
   public: 
     virtual const char* StateName() const
         { return "ReadingKey"; }
-    virtual void ReadEqualsSign( FormatParser& );
-    virtual void ReadComma( FormatParser& );
-    virtual void ReadLeftBrace( FormatParser& );
-    virtual void ReadRightBrace( FormatParser& );
+    virtual void ReadEqualsSign( FormatParser& s )
+    {
+	    s.AddKey();
+	    s.StartAddingValue();
+
+	    // Change the state
+	    s.SetState(FormatParser::ReadingValue());
+	}
+    virtual void ReadComma( FormatParser& s )
+    {
+	    s.AddKey();
+	    s.ContinueCollectingKeys();
+
+	    // Change the state
+	    s.SetState(FormatParser::ReadingKey());
+	}
+    virtual void ReadLeftBrace( FormatParser& s )
+    {
+	    s.StartCollectingPlaceholder();
+
+	    // Change the state
+	    s.SetState(FormatParser::ReadingPlaceholder());
+	}
+    virtual void ReadRightBrace( FormatParser& s )
+    {
+	    s.FinishCollectingPlaceholder();
+
+	    // Change the state
+	    s.SetState(FormatParser::General());
+	}
 };
 //----------------------------------------------
 // State: General
 //----------------------------------------------
-class FormatParserGeneralState : public FormatParserState
+template <typename FormatParser>
+class FormatParserGeneralState : public FormatParserState<FormatParser>
 {
   public: 
     virtual const char* StateName() const
         { return "General"; }
-    virtual void ReadLeftBrace( FormatParser& );
+    virtual void ReadLeftBrace( FormatParser& s )
+    {
+	    s.StartCollectingPlaceholder();
+
+	    // Change the state
+	    s.SetState(FormatParser::ReadingPlaceholder());
+	}
 };
 //----------------------------------------------
 // State: ReadingPlaceholder
 //----------------------------------------------
-class FormatParserReadingPlaceholderState : public FormatParserState
+template <typename FormatParser>
+class FormatParserReadingPlaceholderState : public FormatParserState<FormatParser>
 {
   public: 
     virtual const char* StateName() const
         { return "ReadingPlaceholder"; }
-    virtual void ReadLeftBrace( FormatParser& );
-    virtual void ReadRightBrace( FormatParser& );
-    virtual void ReadComma( FormatParser& );
+    virtual void ReadLeftBrace( FormatParser& s )
+    {
+	    s.StartCollectingPlaceholder();
+
+	    // Change the state
+	    s.SetState(FormatParser::ReadingPlaceholder());
+	}
+    virtual void ReadRightBrace( FormatParser& s )
+    {
+	    s.ParsePlaceholder();
+	    s.FinishCollectingPlaceholder();
+
+	    // Change the state
+	    s.SetState(FormatParser::General());
+    }
+    virtual void ReadComma( FormatParser& s )
+	{
+	    s.ParsePlaceholder();
+	    s.StartKey();
+
+	    // Change the state
+	    s.SetState(FormatParser::ReadingKey());
+	}
 };
 //----------------------------------------------
 // State: ReadingValue
 //----------------------------------------------
-class FormatParserReadingValueState : public FormatParserState
+template <typename FormatParser>
+class FormatParserReadingValueState : public FormatParserState<FormatParser>
 {
   public: 
     virtual const char* StateName() const
         { return "ReadingValue"; }
-    virtual void ReadRightBrace( FormatParser& );
-    virtual void ReadLeftBrace( FormatParser& );
-    virtual void ReadComma( FormatParser& );
+    virtual void ReadRightBrace( FormatParser& s )
+    {
+	    s.AddValue();
+	    s.FinishCollectingPlaceholder();
+
+	    // Change the state
+	    s.SetState(FormatParser::General());
+	}
+    virtual void ReadLeftBrace( FormatParser& s )
+	{
+	    s.StartCollectingPlaceholder();
+
+	    // Change the state
+	    s.SetState(FormatParser::ReadingPlaceholder());
+	}
+    virtual void ReadComma( FormatParser& s )
+	{
+	    s.AddValue();
+
+	    // Change the state
+	    s.SetState(FormatParser::ReadingKey());
+	}
 };
 //----------------------------------------------
 // FormatParser: The Finite State Machine class
@@ -336,12 +407,24 @@ class FormatParser: public FormatContext
 {
   public: 
     // Static State variables
-    static FormatParserReadingKeyState ReadingKey;
-    static FormatParserGeneralState General;
-    static FormatParserReadingPlaceholderState ReadingPlaceholder;
-    static FormatParserReadingValueState ReadingValue;
+    static FormatParserReadingKeyState<FormatParser>& ReadingKey() {
+    	static FormatParserReadingKeyState<FormatParser> _;
+    	return _;
+    }
+    static FormatParserGeneralState<FormatParser>& General() {
+    	static FormatParserGeneralState<FormatParser> _;
+    	return _;
+    }
+    static FormatParserReadingPlaceholderState<FormatParser>& ReadingPlaceholder() {
+    	static FormatParserReadingPlaceholderState<FormatParser> _;
+    	return _;
+    }
+    static FormatParserReadingValueState<FormatParser>& ReadingValue() {
+    	static FormatParserReadingValueState<FormatParser> _;
+    	return _;
+    }
 
-    FormatParser(); // default Constructor
+    FormatParser() : itsState(&FormatParser::General()) {} // default Constructor
 
     // Event functions
     virtual void ReadEqualsSign() { itsState->ReadEqualsSign( *this ); }
@@ -350,14 +433,13 @@ class FormatParser: public FormatContext
     virtual void ReadComma() { itsState->ReadComma( *this ); }
 
     // State Accessor functions
-    void SetState( FormatParserState& theState ) { itsState = &theState; }
-    FormatParserState& GetState() const { return *itsState; }
+    void SetState( FormatParserState<FormatParser>& theState ) { itsState = &theState; }
+    FormatParserState<FormatParser>& GetState() const { return *itsState; }
 
     const char* GetCurrentStateName() const { return itsState->StateName(); }
-    const char* GetVersion() const;
 
   private: 
-    FormatParserState* itsState;
+    FormatParserState<FormatParser>* itsState;
 };
 
 	//////////////////PARSER END//////////////////////////

@@ -68,8 +68,7 @@ local tests=project "test"
 	language "C++"
 	files {
 		path.join(basedir,"**.cpp"),
-		path.join(basedir,"../*.hpp"),
-		path.join(basedir,"../fakeformat.cpp")
+		path.join(basedir,"../*.hpp")
 	}
 	CompilerSpecificConfiguration()
 
