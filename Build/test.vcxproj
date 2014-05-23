@@ -106,8 +106,6 @@
     <ClInclude Include="..\fakeformat.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\fakeformat.cpp">
-    </ClCompile>
     <ClCompile Include="..\test\linker_test.cpp">
     </ClCompile>
     <ClCompile Include="..\test\test.cpp">

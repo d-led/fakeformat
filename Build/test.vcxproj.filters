@@ -14,9 +14,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\fakeformat.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\test\linker_test.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
