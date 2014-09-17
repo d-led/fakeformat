@@ -1,4 +1,19 @@
 language: cpp
 
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "M89Raz/2cXFK3S0DjoDQ1FMeqMEWcFD6nJNUSr/RmavBwAJdZImL5q+t9VJiSlSpZJnR4O31onTo3GcULH325QB0e+MVU39ZiZZugWE/4aE0iiCFM5SWyNRit2+E/2PvYj30HBl6FGpGGlmx19maiogZBAWPyEFFMrUw/hfU7vY="
+
+addons:
+  coverity_scan:
+    project:
+      name: "d-led/fakeformat"
+      description: "simple string formatting for c++"
+    notification_email: dmlled@yahoo.com
+    build_command:   "make -C Build config=release"
+    branch_pattern: master
+
 script:
   - make -C Build config=release
