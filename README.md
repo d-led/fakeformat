@@ -1,7 +1,7 @@
 fakeformat
 ==========
 
-[![Build Status](https://travis-ci.org/d-led/fakeformat.png?branch=master)](https://travis-ci.org/d-led/fakeformat)
+[![Build Status](https://travis-ci.org/d-led/fakeformat.png?branch=master)](https://travis-ci.org/d-led/fakeformat) [![Coverity Status](https://scan.coverity.com/projects/3009/badge.svg)](https://scan.coverity.com/projects/3009)
 
 This small library is intended as a fast c++ prototyping tool in cases where something like [.NET](http://msdn.microsoft.com/en-us/library/system.string.format.aspx#Format2_Example) `String.Format` or [Boost.Locale](http://www.boost.org/doc/libs/1_53_0/libs/locale/doc/html/localized_text_formatting.html)'s `format` is required, one doesn't need performance, doesn't want to use any large library and doesn't need fancy format specifiers.
 
