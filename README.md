@@ -12,12 +12,9 @@ For a [fast](http://zverovich.net/2013/09/07/integer-to-string-conversion-in-cpl
 usage
 =====
 
-building
---------
+Just include `fakeformat.hpp`
 
-Include `fakeformat.hpp` and compile `fakeformat.cpp`
-
-The [premake4](http://industriousone.com/premake)-generated makefiles for Visual Studio 2012 and gnu make can be found in the Build folder.
+The [premake4](http://industriousone.com/premake)-generated makefiles for Visual Studio 2012 and gnu make can be found in the Build folder for testing purposes.
 
 trying out
 ----------
