@@ -7,7 +7,7 @@ This small library is intended as a fast c++ prototyping tool in cases where som
 
 Note that, unlike in `String.Format` or [python](http://docs.python.org/2/library/string.html#format-examples)'s `format`, Boost.Locale formatting language starts the placeholders at `1`. Hence, the configurability of `fakeformat`.
 
-For a [fast](http://zverovich.net/2013/09/07/integer-to-string-conversion-in-cplusplus.html), but not header-only alternative, check out [cppformat](https://github.com/cppformat/cppformat).
+For a [fast](http://zverovich.net/2013/09/07/integer-to-string-conversion-in-cplusplus.html), but not header-only alternative, check out [cppformat](https://github.com/cppformat/cppformat). Others, and most definitely, many more:  [flossy/c++14](https://github.com/rnlf/flossy), [wire/c++11](https://github.com/r-lyeh/wire)
 
 usage
 =====
