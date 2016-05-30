@@ -3,11 +3,11 @@ fakeformat
 
 [![Build Status](https://travis-ci.org/d-led/fakeformat.png?branch=master)](https://travis-ci.org/d-led/fakeformat) [![Coverity Status](https://scan.coverity.com/projects/3009/badge.svg)](https://scan.coverity.com/projects/3009)
 
-This small library is intended as a fast c++ prototyping tool in cases where something like [.NET](http://msdn.microsoft.com/en-us/library/system.string.format.aspx#Format2_Example) `String.Format` or [Boost.Locale](http://www.boost.org/doc/libs/1_53_0/libs/locale/doc/html/localized_text_formatting.html)'s `format` is required, one doesn't need performance, doesn't want to use any large library and doesn't need fancy format specifiers.
+This small library is intended as a fast c++ prototyping tool in cases where something like [.NET](http://msdn.microsoft.com/en-us/library/system.string.format.aspx#Format2_Example) `String.Format` or [Boost.Locale](http://www.boost.forg/doc/libs/1_53_0/libs/locale/doc/html/localized_text_formatting.html)'s `format` is required, one doesn't need performance, doesn't want to use any large library and doesn't need fancy format specifiers.
 
 Note that, unlike in `String.Format` or [python](http://docs.python.org/2/library/string.html#format-examples)'s `format`, Boost.Locale formatting language starts the placeholders at `1`. Hence, the configurability of `fakeformat`.
 
-For a [fast](http://zverovich.net/2013/09/07/integer-to-string-conversion-in-cplusplus.html), but not header-only alternative, check out [cppformat](https://github.com/cppformat/cppformat). Others, and most definitely, many more:  [flossy/c++14](https://github.com/rnlf/flossy), [wire/c++11](https://github.com/r-lyeh/wire)
+For a [fast](http://zverovich.net/2013/09/07/integer-to-string-conversion-in-cplusplus.html), but not header-only alternative, check out [fmt](http://fmtlib.net/) or [cppformat](https://github.com/cppformat/cppformat). Others, and most definitely, many more:  [flossy/c++14](https://github.com/rnlf/flossy), [fmt1/c1++11](https://github.com/r-lyeh/wire), [](https://github.com/r-lyeh/fmt11)
 
 usage
 =====
